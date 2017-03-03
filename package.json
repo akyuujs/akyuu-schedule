@@ -1,0 +1,25 @@
+{
+  "name": "akyuu-schedule",
+  "version": "0.1.1",
+  "description": "schedule plug in for akyuu",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akyuujs/akyuu-schedule.git"
+  },
+  "keywords": [
+    "akyuu",
+    "schedule"
+  ],
+  "author": "DuanPengfei",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/akyuujs/akyuu-schedule/issues"
+  },
+  "homepage": "https://github.com/akyuujs/akyuu-schedule#readme",
+  "dependencies": {
+    "debug": "^2.6.1",
+    "node-schedule": "^1.2.0"
+  }
+}
