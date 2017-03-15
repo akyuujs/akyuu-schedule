@@ -24,9 +24,9 @@ class Schedule {
         const enabledTasks = this.enabledTasks;
 
         if(mode === 'blacklist') {
-            return !(disabledTasks.indexOf(name) + 1);
+            return disabledTasks.indexOf(name) < 0;
         } else if(mode === 'whiteList') {
-            return !!(enabledTasks.indexOf(name) + 1);
+            return enabledTasks.indexOf(name) > -1;
         } else {
             return true;
         }
