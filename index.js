@@ -11,11 +11,30 @@ const schedule = require('node-schedule');
 class Schedule {
     constructor(akyuu, options) {
         this.akyuu = akyuu;
+        this.logger = akyuu.logger.get('plugin-schedule');
         this.position = this.akyuu.PLUGIN_POS.AFTER_CONTROLLER;
+        this.mode = options.mode;
+        this.disabledTasks = options.disabledTasks || [];
+        this.enabledTasks = options.enabledTasks || [];
+    }
+
+    _isEnabled(name) {
+        const mode = this.mode;
+        const disabledTasks = this.disabledTasks;
+        const enabledTasks = this.enabledTasks;
+
+        if(mode === 'blacklist') {
+            return !(disabledTasks.indexOf(name) + 1);
+        } else if(mode === 'whiteList') {
+            return !!(enabledTasks.indexOf(name) + 1);
+        } else {
+            return true;
+        }
     }
 
     plug() {
-        const dir = path.join(this.akyuu.config.server.root, 'scheduled');
+        const _this = this;
+        const dir = path.join(_this.akyuu.config.server.root, 'scheduled');
         let fileList = [];
         try {
             fileList = fs.readdirSync(dir);
@@ -39,11 +58,20 @@ class Schedule {
             const task = require(file);
             if (!task.plan || !task.job) continue;
 
-            schedule.scheduleJob(task.plan, task.job);
+            if (!_this._isEnabled(path.parse(file).name)) continue;
+
+            schedule.scheduleJob(task.plan, function() {
+                task.job(function(error) {
+                    if(error) {
+                        _this.logger.error('run schedule job error');
+                        _this.logger.error(error.stack);
+                    }
+                });
+            });
         }
 
         if(fileList.length === 0) {
-            console.log('no task');
+            _this.logger.info('no schedule job');
         }
     }
 }
